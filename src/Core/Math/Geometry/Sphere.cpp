@@ -4,7 +4,6 @@
 #include "OBB.h"
 #include "Ray.h"
 #include "Plane.h"
-#include "Utils.hpp"
 
 Sphere::Sphere()
 {

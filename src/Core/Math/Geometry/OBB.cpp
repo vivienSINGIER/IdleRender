@@ -1,7 +1,6 @@
 #include "OBB.h"
 
 #include "AABB.h"
-#include "Utils.hpp"
 #include "Plane.h"
 #include "Ray.h"
 #include "Sphere.h"

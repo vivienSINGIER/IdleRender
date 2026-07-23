@@ -5,9 +5,9 @@
 #include "../Render/Generic/Render.h"
 #include "Core/Math/Matrix/Matrix.h"
 #include "Core/Math/Vector/Vector.h"
-#include "Core/Transform.h"
+#include "Core/Transform/Transform.h"
 
-#include "../Engine/InputManager.h"
+#include "Core/InputManager.h"
 
 #include "../Core/Math/Geometry/AABB.h"
 #include "Core/Math/Geometry/OBB.h"
@@ -21,68 +21,42 @@ public:
     Geometry* sphere;
     Geometry* line;
     
-    XMFLOAT4X4 ToD3DMatrix(Mat4f32 const& _m)
-    {
-        XMFLOAT4X4 M;
-
-        M._11 = _m.m00;
-        M._12 = _m.m01;
-        M._13 = _m.m02;
-        M._14 = _m.m03;
-
-        M._21 = _m.m10;
-        M._22 = _m.m11;
-        M._23 = _m.m12;
-        M._24 = _m.m13;
-
-        M._31 = _m.m20;
-        M._32 = _m.m21;
-        M._33 = _m.m22;
-        M._34 = _m.m23;
-
-        M._41 = _m.m30;
-        M._42 = _m.m31;
-        M._43 = _m.m32;
-        M._44 = _m.m33;
-        return M;
-    }
-    
     void HandleObjectInput(InputManager& _im, Transform& t)
     {
         float dt = 1.0f / 60.0f;
         
-        if (_im.IsKey(D, 1))
+        if (_im.IsKey(D))
             t.Move(Vect3f32(1.0f, 0.0f, 0.0f) * dt );
-        if (_im.IsKey(Q, 1))
+        if (_im.IsKey(Q))
             t.Move(Vect3f32(-1.0f, 0.0f, 0.0f) * dt );
-        if (_im.IsKey(Z, 1))
+        if (_im.IsKey(Z))
             t.Move(Vect3f32(0.0f, 0.0f, 1.0f) * dt );
-        if (_im.IsKey(S, 1))
+        if (_im.IsKey(S))
             t.Move(Vect3f32(0.0f, 0.0f, -1.0f) * dt );
-        if (_im.IsKey(SPACE, 1))
+        if (_im.IsKey(SPACE))
             t.Move(Vect3f32(0.0f, 1.0f, 0.0f) * dt );
-        if (_im.IsKey(LCTRL, 1))
+        if (_im.IsKey(LCTRL))
             t.Move(Vect3f32(0.0f, -1.0f, 0.0f) * dt );
         
-        if (_im.IsKey(NUMPAD8, 1))
+        if (_im.IsKey(NUMPAD8))
             t.AddYPR(Vect3f32(0.0f, 1.0f, 0.0f) * dt );
-        if (_im.IsKey(NUMPAD5, 1))
+        if (_im.IsKey(NUMPAD5))
             t.AddYPR(Vect3f32(0.0f, -1.0f, 0.0f) * dt );
-        if (_im.IsKey(NUMPAD4, 1))
+        if (_im.IsKey(NUMPAD4))
             t.AddYPR(Vect3f32(1.0f, 0.0f, 0.0f) * dt );
-        if (_im.IsKey(NUMPAD6, 1))
+        if (_im.IsKey(NUMPAD6))
             t.AddYPR(Vect3f32(-1.0f, 0.0f, 0.0f) * dt );
-        if (_im.IsKey(NUMPAD7, 1))
+        if (_im.IsKey(NUMPAD7))
             t.AddYPR(Vect3f32(0.0f, 0.0f, 1.0f) * dt );
-        if (_im.IsKey(NUMPAD9, 1))
+        if (_im.IsKey(NUMPAD9))
             t.AddYPR(Vect3f32(0.0f, 0.0f, -1.0f) * dt );
         
-        if (_im.IsKey(NUMPAD_ADD, 1))
+        if (_im.IsKey(NUMPAD_ADD))
             t.Scale( 1.01f );
-        if (_im.IsKey(NUMPAD_SUBTRACT, 1))
+        if (_im.IsKey(NUMPAD_SUBTRACT))
             t.Scale( 0.99f );
         
-        _im.HandleInput(1);
+        _im.HandleInput();
     }
     
     void DrawAABB(Device* _d, AABB _a)

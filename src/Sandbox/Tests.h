@@ -14,15 +14,6 @@
 #include "Tests/Render/DemoTexture.hpp"
 #include "Tests/Render/DemoLight.hpp"
 
-#include "Tests/Engine/TestECS.hpp"
-#include "Tests/Engine/TestScripts.hpp"
-#include "Tests/Engine/TestTransformComponent.hpp"
-#include "Tests/Engine/TestInputs.hpp"
-#include "Tests/Engine/TestCamera.hpp"
-#include "Tests/Engine/TestLights.hpp"
-#include "Tests/Engine/TestNetwork.hpp"
-#include "Tests/Engine/TestUi.hpp"
-
 #include "Tests/Math/TestMathMethods.hpp"
 #include "Tests/Math/TestVector2.hpp"
 #include "Tests/Math/TestVector3.hpp"

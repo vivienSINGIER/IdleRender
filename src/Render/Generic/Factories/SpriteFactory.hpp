@@ -56,14 +56,14 @@ public:
 
         const float startAngles[4] = {
             0.0f,                          
-            XM_PIDIV2,                     
-            XM_PI,                         
-            XM_PI + XM_PIDIV2,             
+            MathUtils::HALF_PI,                     
+            MathUtils::PI,                         
+            MathUtils::PI + MathUtils::HALF_PI,             
         };
         
         vertices.push_back(UiVertex(Vect2f32(0.0f, 0.0f), Vect2f32(0.5f, 0.5f)));
 
-        float angleStep = XM_PIDIV2 / (float)_cornerSegments;
+        float angleStep = MathUtils::HALF_PI / (float)_cornerSegments;
 
         for (int corner = 0; corner < 4; ++corner)
         {

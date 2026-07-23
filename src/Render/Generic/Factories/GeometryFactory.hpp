@@ -214,7 +214,7 @@ private:
 		);
 
 		int indexCenter = (UINT)vertices.size() - 1;
-		float angle = XM_PI / (float)_stackCount * 2.0f;
+		float angle = MathUtils::PI / (float)_stackCount * 2.0f;
     	
 		for (int i = 0; i < _stackCount + 1; ++i)
 		{
@@ -462,8 +462,8 @@ public:
     		Vect3f32 n = vertices[i].position.Normalized() * 0.5f;
     		vertices[i].position = { n.x, n.y, n.z };
     		
-    		float u = 0.5f + atan2f(n.z, n.x) / XM_2PI;
-    		float v = 0.5f - asinf(n.y) / XM_PI;
+    		float u = 0.5f + atan2f(n.z, n.x) / MathUtils::TWO_PI;
+    		float v = 0.5f - asinf(n.y) / MathUtils::PI;
     		vertices[i].uv = Vect2f32(u, v);
     	}
 
@@ -544,8 +544,8 @@ public:
 	    // top pole
 	    vertices.push_back(Vertex{ Vect3f32(0.0f, 1.0f, 0.0f), Vect2f32(0.5f, 0.0f) });
 
-	    float phiStep   = XM_PI / _stackCount;
-	    float thetaStep = XM_2PI / _sliceCount;
+	    float phiStep   = MathUtils::PI / _stackCount;
+	    float thetaStep = MathUtils::TWO_PI / _sliceCount;
 
 	    for (uint32 i = 1; i < _stackCount; ++i)
 	    {
@@ -651,7 +651,7 @@ public:
     	Circle(vertices, indices, _stackCount,  0.5f, true);
 
     	int sideBaseVertex = (int)vertices.size();
-    	float angle = XM_PI / (float)_stackCount * 2.0f;
+    	float angle = MathUtils::PI / (float)_stackCount * 2.0f;
     	for (int i = 0; i <= _stackCount; ++i)
     	{
     		float u  = (float)i / (float)_stackCount;
@@ -697,16 +697,16 @@ public:
     	for (uint32 i = 0; i <= _majorSlices; ++i)
     	{
 			float u = (float)i / (float)_majorSlices;
-    		float theta = u * 2.0f * XM_PI;
+    		float theta = u * 2.0f * MathUtils::PI;
     		
     		for (uint32 j = 0; j <= _minorSlices; ++j)
     		{
     			float v = (float)j / (float)_minorSlices;
-    			float phi = v * 2.0f * XM_PI;
+    			float phi = v * 2.0f * MathUtils::PI;
 
-    			float x = (_majorRadius + _minorRadius * XMScalarCos(phi)) * XMScalarCos(theta);
-    			float y = _minorRadius * XMScalarSin(phi);
-    			float z = (_majorRadius + _minorRadius * XMScalarCos(phi)) * XMScalarSin(theta);
+    			float x = (_majorRadius + _minorRadius * MathUtils::Cos(phi)) * MathUtils::Cos(theta);
+    			float y = _minorRadius * MathUtils::Sin(phi);
+    			float z = (_majorRadius + _minorRadius * MathUtils::Cos(phi)) * MathUtils::Sin(theta);
 
     			Vertex vertex;
     			vertex.position = Vect3f32(x, y, z);

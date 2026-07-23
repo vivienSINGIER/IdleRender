@@ -5,9 +5,9 @@
 #include "../Render/Generic/Render.h"
 #include "Core/Math/Matrix/Matrix.h"
 #include "Core/Math/Vector/Vector.h"
-#include "Core/Transform.h"
+#include "Core/Transform/Transform.h"
 
-#include "../Engine/InputManager.h"
+#include "Core/InputManager.h"
 
 #include "../Core/Math/Geometry/AABB.h"
 #include "Core/Math/Geometry/Frustum.h"
@@ -26,84 +26,84 @@ public:
     
     void HandleObjectInput(InputManager& _im, Transform& t)
     {
-        if (_im.IsKey(LCONTROL, 1) == true)
+        if (_im.IsKey(LCONTROL) == true)
             return;
         
         float dt = 1.0f / 60.0f;
         
-        if (_im.IsKey(D, 1))
+        if (_im.IsKey(D))
             t.Move(Vect3f32(1.0f, 0.0f, 0.0f) * dt );
-        if (_im.IsKey(Q, 1))
+        if (_im.IsKey(Q))
             t.Move(Vect3f32(-1.0f, 0.0f, 0.0f) * dt );
-        if (_im.IsKey(Z, 1))
+        if (_im.IsKey(Z))
             t.Move(Vect3f32(0.0f, 0.0f, 1.0f) * dt );
-        if (_im.IsKey(S, 1))
+        if (_im.IsKey(S))
             t.Move(Vect3f32(0.0f, 0.0f, -1.0f) * dt );
-        if (_im.IsKey(SPACE, 1))
+        if (_im.IsKey(SPACE))
             t.Move(Vect3f32(0.0f, 1.0f, 0.0f) * dt );
-        if (_im.IsKey(LSHIFT, 1))
+        if (_im.IsKey(LSHIFT))
             t.Move(Vect3f32(0.0f, -1.0f, 0.0f) * dt );
         
-        if (_im.IsKey(NUMPAD8, 1))
+        if (_im.IsKey(NUMPAD8))
             t.AddYPR(Vect3f32(0.0f, 1.0f, 0.0f) * dt );
-        if (_im.IsKey(NUMPAD5, 1))
+        if (_im.IsKey(NUMPAD5))
             t.AddYPR(Vect3f32(0.0f, -1.0f, 0.0f) * dt );
-        if (_im.IsKey(NUMPAD4, 1))
+        if (_im.IsKey(NUMPAD4))
             t.AddYPR(Vect3f32(-1.0f, 0.0f, 0.0f) * dt );
-        if (_im.IsKey(NUMPAD6, 1))
+        if (_im.IsKey(NUMPAD6))
             t.AddYPR(Vect3f32(1.0f, 0.0f, 0.0f) * dt );
-        if (_im.IsKey(NUMPAD7, 1))
+        if (_im.IsKey(NUMPAD7))
             t.AddYPR(Vect3f32(0.0f, 0.0f, 1.0f) * dt );
-        if (_im.IsKey(NUMPAD9, 1))
+        if (_im.IsKey(NUMPAD9))
             t.AddYPR(Vect3f32(0.0f, 0.0f, -1.0f) * dt );
         
-        if (_im.IsKey(NUMPAD_ADD, 1))
+        if (_im.IsKey(NUMPAD_ADD))
             t.Scale( 1.01f );
-        if (_im.IsKey(NUMPAD_SUBTRACT, 1))
+        if (_im.IsKey(NUMPAD_SUBTRACT))
             t.Scale( 0.99f );
         
-        _im.HandleInput(1);
+        _im.HandleInput();
     }
     
     void HandleCameraInput(InputManager& _im)
     {
-        if (_im.IsKey(LCONTROL, 1) == false)
+        if (_im.IsKey(LCONTROL) == false)
             return;
         
         float dt = 1.0f / 60.0f;
         
-        if (_im.IsKey(D, 1))
+        if (_im.IsKey(D))
             camT.Move(Vect3f32(1.0f, 0.0f, 0.0f) * dt );
-        if (_im.IsKey(Q, 1))
+        if (_im.IsKey(Q))
             camT.Move(Vect3f32(-1.0f, 0.0f, 0.0f) * dt );
-        if (_im.IsKey(Z, 1))
+        if (_im.IsKey(Z))
             camT.Move(Vect3f32(0.0f, 0.0f, 1.0f) * dt );
-        if (_im.IsKey(S, 1))
+        if (_im.IsKey(S))
             camT.Move(Vect3f32(0.0f, 0.0f, -1.0f) * dt );
-        if (_im.IsKey(SPACE, 1))
+        if (_im.IsKey(SPACE))
             camT.Move(Vect3f32(0.0f, 1.0f, 0.0f) * dt );
-        if (_im.IsKey(LSHIFT, 1))
+        if (_im.IsKey(LSHIFT))
             camT.Move(Vect3f32(0.0f, -1.0f, 0.0f) * dt );
         
-        if (_im.IsKey(NUMPAD8, 1))
+        if (_im.IsKey(NUMPAD8))
             camT.AddYPR(Vect3f32(0.0f, 1.0f, 0.0f) * dt );
-        if (_im.IsKey(NUMPAD5, 1))
+        if (_im.IsKey(NUMPAD5))
             camT.AddYPR(Vect3f32(0.0f, -1.0f, 0.0f) * dt );
-        if (_im.IsKey(NUMPAD4, 1))
+        if (_im.IsKey(NUMPAD4))
             camT.AddYPR(Vect3f32(-1.0f, 0.0f, 0.0f) * dt );
-        if (_im.IsKey(NUMPAD6, 1))
+        if (_im.IsKey(NUMPAD6))
             camT.AddYPR(Vect3f32(1.0f, 0.0f, 0.0f) * dt );
-        if (_im.IsKey(NUMPAD7, 1))
+        if (_im.IsKey(NUMPAD7))
             camT.AddYPR(Vect3f32(0.0f, 0.0f, 1.0f) * dt );
-        if (_im.IsKey(NUMPAD9, 1))
+        if (_im.IsKey(NUMPAD9))
             camT.AddYPR(Vect3f32(0.0f, 0.0f, -1.0f) * dt );
         
-        if (_im.IsKey(NUMPAD_ADD, 1))
+        if (_im.IsKey(NUMPAD_ADD))
             camT.Scale( 1.01f );
-        if (_im.IsKey(NUMPAD_SUBTRACT, 1))
+        if (_im.IsKey(NUMPAD_SUBTRACT))
             camT.Scale( 0.99f );
         
-        _im.HandleInput(1);
+        _im.HandleInput();
     }
         
     void Run()

@@ -10,32 +10,6 @@
 class TestDebug : public Test
 {
 public:
-    XMFLOAT4X4 ToD3DMatrix(Mat4f32 const& _m)
-    {
-        XMFLOAT4X4 M;
-
-        M._11 = _m.m00;
-        M._12 = _m.m01;
-        M._13 = _m.m02;
-        M._14 = _m.m03;
-
-        M._21 = _m.m10;
-        M._22 = _m.m11;
-        M._23 = _m.m12;
-        M._24 = _m.m13;
-
-        M._31 = _m.m20;
-        M._32 = _m.m21;
-        M._33 = _m.m22;
-        M._34 = _m.m23;
-
-        M._41 = _m.m30;
-        M._42 = _m.m31;
-        M._43 = _m.m32;
-        M._44 = _m.m33;
-        return M;
-    }
-    
     void Run()
     {
         Window window(1080, 720, L"Test", false);

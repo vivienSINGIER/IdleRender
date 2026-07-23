@@ -22,7 +22,7 @@ float MathUtils::ISqrt(float _v)
 
 int MathUtils::Factorial(uint8 _x)
 {
-    if (_x == 0) return 1.0f;
+    if (_x == 0) return 1;
     
     int result = 1;
     

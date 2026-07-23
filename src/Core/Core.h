@@ -6,9 +6,10 @@
 
 #include "nlohmann.hpp"
 
-#include "Transform.h"
-#include "Transform2D.h"
-#include "TransformD3D.h"
+#include "InputManager.h"
+
+#include "Transform/Transform.h"
+#include "Transform/Transform2D.h"
 
 #include "Math/Geometry/AABB.h"
 #include "Math/Geometry/Frustum.h"
@@ -20,8 +21,5 @@
 #include "Math/Matrix/Matrix.h" 
 #include "Math/Quaternions/Quaternion.h"
 #include "Math/Vector/Vector.h"
-
-// TODO REMOVE
-#include "Utils.hpp"
 
 #endif

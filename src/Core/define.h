@@ -4,24 +4,19 @@
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
-#ifndef _WINSOCKAPI_
-#define _WINSOCKAPI_
-#endif
+
 #include <windows.h>
+#include <cassert>
 
 #include <iostream>
 #include <any>
-#include <DirectXCollision.h>
 #include <string>
 #include <vector>
 #include <array>
 #include <unordered_map>
 
-#include <DirectXMath.h>
 #include <map>
 #include <queue>
-
-using namespace DirectX;
 
 using int8      = int8_t;
 using int16     = int16_t;
