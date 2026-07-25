@@ -283,19 +283,21 @@ public:
     		// Front face
     		Vertex{Vect3f32(-0.5f, -0.5f, -0.5f), Vect2f32(0.0f, 1.0f)},
 			Vertex{Vect3f32( 0.5f, -0.5f, -0.5f), Vect2f32(1.0f, 1.0f)},
+    		Vertex{Vect3f32( 0.0f,  0.5f,  0.0f), Vect2f32(0.5f, 0.0f)},
 
     		// Right Face
 			Vertex{Vect3f32( 0.5f, -0.5f, -0.5f), Vect2f32(0.0f, 1.0f)},
     		Vertex{Vect3f32( 0.5f, -0.5f, 00.5f), Vect2f32(1.0f, 1.0f)},
+    		Vertex{Vect3f32( 0.0f,  0.5f,  0.0f), Vect2f32(0.5f, 0.0f)},
 
     		// Back Face
     		Vertex{Vect3f32(0.5f, -0.5f, 0.5f), Vect2f32(0.0f, 1.0f)},
 			Vertex{Vect3f32( -0.5f, -0.5f, 0.5f), Vect2f32(1.0f, 1.0f)},
+    		Vertex{Vect3f32( 0.0f,  0.5f,  0.0f), Vect2f32(0.5f, 0.0f)},
 
 			// Left Face
     		Vertex{Vect3f32( -0.5f, -0.5f, 0.5f), Vect2f32(0.0f, 1.0f)},
 			Vertex{Vect3f32( -0.5f, -0.5f, -0.5f), Vect2f32(1.0f, 1.0f)},
-    		
 			Vertex{Vect3f32( 0.0f,  0.5f,  0.0f), Vect2f32(0.5f, 0.0f)},
 
     		// Bottom Face
@@ -305,13 +307,13 @@ public:
 			Vertex{Vect3f32( -0.5f, -0.5f, 0.5f), Vect2f32(0.0f, 1.0f)}
 		};
     	indices = {
-    		9, 10, 11,
-    		9, 11, 12,
+    		12, 13, 14,
+    		12, 14, 15,
     		
-			0, 8, 1, // Front Face
-			2, 8, 3, // Right Face
-    		4, 8, 5, // Back Face
-    		6, 8, 7, // Left Face
+			0, 2, 1, // Front Face
+			3, 5, 4, // Right Face
+    		6, 8, 7, // Back Face
+    		9, 11, 10, // Left Face
 		};
 
     	vertices = CalculateNormalsAndTangents(vertices, indices);
