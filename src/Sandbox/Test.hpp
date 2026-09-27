@@ -6,6 +6,8 @@
 class Test
 {
 public:
+    Chrono m_clock;
+    
     Test() = default;
     virtual ~Test() = default;
     
@@ -15,6 +17,7 @@ public:
     {
         std::cout << "\033[92m [PASS] -> " << m_successCount << "\n";
         std::cout << "\033[91m [FAIL] -> " << m_failCount << "\n";
+        std::cout << "Ran in " << m_clock.GetElapsedTime() << " seconds \n";
     }
     
     ///////////////////////////////////////////////////////////////////////////

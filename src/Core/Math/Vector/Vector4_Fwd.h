@@ -3,12 +3,13 @@
 
 #include "Vector2.h"
 #include "Vector3.h"
+#include "Math/Simd/SimdTraits.h"
 
 template <typename T>
 class Matrix4;
 
 template <typename T>
-class Vector4
+class alignas(Simd::Traits<T>::alignment) Vector4
 {
 public:
     T x;

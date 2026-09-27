@@ -35,6 +35,7 @@ class TestVector4 : public Test
 public:
     void Run() override
     {
+        m_clock.Start();
         Test_Constructors();
         Test_Arithmetic();
         Test_CompoundAssignment();

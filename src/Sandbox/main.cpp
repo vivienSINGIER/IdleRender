@@ -9,7 +9,7 @@ int WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 {
 	Console::InitConsol();
 	
-	TestCameraFrustum test;
+	TestVector4 test;
 	
 	test.Run();
 

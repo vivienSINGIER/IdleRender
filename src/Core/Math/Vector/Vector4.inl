@@ -4,6 +4,8 @@
 #include "Vector4.h"
 #include "../Matrix/Matrix4.h"
 
+using namespace Simd;
+
 template <typename T>
 Vector4<T>::Vector4()
 {
@@ -99,134 +101,295 @@ Vector4<T>::Vector4(std::initializer_list<T> _l)
 template <typename T>
 Vector4<T> Vector4<T>::operator+(Vector4 const& _o) const
 {
-    return Vector4(x + _o.x, y + _o.y, z + _o.z, w + _o.w);
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        Vector4 res;
+        S::Store(res.Data(), S::Add(S::Load(Data()), S::Load(_o.Data())));
+        return res;
+    }
+    else
+    {
+        return Vector4(x + _o.x, y + _o.y, z + _o.z, w + _o.w);
+    }
 }
 
 template <typename T>
 Vector4<T> Vector4<T>::operator-(Vector4 const& _o) const
 {
-    return Vector4(x - _o.x, y - _o.y, z - _o.z, w - _o.w);
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        Vector4 res;
+        S::Store(res.Data(), S::Sub(S::Load(Data()), S::Load(_o.Data())));
+        return res;
+    }
+    else
+    {
+        return Vector4(x + _o.x, y + _o.y, z + _o.z, w + _o.w);
+    }
 }
 
 template <typename T>
 Vector4<T> Vector4<T>::operator-() const
 {
-    return Vector4<T>(-x, -y, -z, -w);
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        Vector4 res;
+        S::Store(res.Data(), S::Neg(S::Load(Data())));
+        return res;
+    }
+    else
+    {
+        return Vector4(-x, -y, -z, -w);
+    }
 }
 
 template <typename T>
 Vector4<T> Vector4<T>::operator*(Vector4 const& _o) const
 {
-    return Vector4(x * _o.x, y * _o.y, z * _o.z, w * _o.w);
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        Vector4 res;
+        S::Store(res.Data(), S::Mul(S::Load(Data()), S::Load(_o.Data())));
+        return res;
+    }
+    else
+    {
+        return Vector4(x * _o.x, y * _o.y, z * _o.z, w * _o.w);
+    }
 }
 
 template <typename T>
 Vector4<T> Vector4<T>::operator/(Vector4 const& _o) const
 {
     assert(_o.x != 0.0f && _o.y != 0.0f && _o.z != 0.0f && _o.w != 0.0f && "Division by zero");
-    return Vector4(x / _o.x, y / _o.y, z / _o.z, w / _o.w);
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        Vector4 res;
+        S::Store(res.Data(), S::Div(S::Load(Data()), S::Load(_o.Data())));
+        return res;
+    }
+    else
+    {
+        return Vector4(x / _o.x, y / _o.y, z / _o.z, w / _o.w);
+    }
 }
 
 template <typename T>
 Vector4<T> Vector4<T>::operator*(float _scalar) const
 {
-    return Vector4(x * _scalar, y * _scalar, z * _scalar, w * _scalar);
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        Vector4 res;
+        S::Store(res.Data(), S::Mul(S::Load(Data()), S::Set1(_scalar)));
+        return res;
+    }
+    else
+    {
+        return Vector4(x * _scalar, y * _scalar, z * _scalar, w * _scalar);
+    }
 }
 
 template <typename T>
 Vector4<T> Vector4<T>::operator/(float _scalar) const
 {
     assert(_scalar != 0.0f && "Division by zero");
-    return Vector4(x / _scalar, y / _scalar, z / _scalar, w / _scalar);
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        Vector4 res;
+        S::Store(res.Data(), S::Div(S::Load(Data()), S::Set1(_scalar)));
+        return res;
+    }
+    else
+    {
+        return Vector4(x / _scalar, y / _scalar, z / _scalar, w / _scalar);
+    }
 }
 
 template <typename T>
 Vector4<T> Vector4<T>::operator*(Matrix4<T> const& _m) const
 {
-    Vector4<T> result;
-    result.x = x * _m[0][0] + y * _m[1][0] + z * _m[2][0] + w * _m[3][0];
-    result.y = x * _m[0][1] + y * _m[1][1] + z * _m[2][1] + w * _m[3][1];
-    result.z = x * _m[0][2] + y * _m[1][2] + z * _m[2][2] + w * _m[3][2];
-    result.w = x * _m[0][3] + y * _m[1][3] + z * _m[2][3] + w * _m[3][3];
-    return result;
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        auto r0 = S::Load(_m.rows[0].Data());
+        auto r1 = S::Load(_m.rows[1].Data());
+        auto r2 = S::Load(_m.rows[2].Data());
+        auto r3 = S::Load(_m.rows[3].Data());
+        S::Transpose4x4(r0, r1, r2, r3);
+        
+        Vector4 res;
+        res.x = S::GetX(S::Dot4(S::Load(Data()), r0));
+        res.y = S::GetX(S::Dot4(S::Load(Data()), r1));
+        res.z = S::GetX(S::Dot4(S::Load(Data()), r2));
+        res.w = S::GetX(S::Dot4(S::Load(Data()), r3));
+        return res;
+    }
+    else
+    {
+        Vector4<T> result;
+        result.x = x * _m[0][0] + y * _m[1][0] + z * _m[2][0] + w * _m[3][0];
+        result.y = x * _m[0][1] + y * _m[1][1] + z * _m[2][1] + w * _m[3][1];
+        result.z = x * _m[0][2] + y * _m[1][2] + z * _m[2][2] + w * _m[3][2];
+        result.w = x * _m[0][3] + y * _m[1][3] + z * _m[2][3] + w * _m[3][3];
+        return result;   
+    }
 }
 
 template <typename T>
 Vector4<T>& Vector4<T>::operator+=(Vector4 const& _o)
 {
-    x += _o.x;
-    y += _o.y;
-    z += _o.z;
-    w += _o.w;
-    return *this;
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        S::Store(Data(), S::Add(S::Load(Data()), S::Load(_o.Data())));
+        return *this;
+    }
+    else
+    {
+        x += _o.x;
+        y += _o.y;
+        z += _o.z;
+        w += _o.w;
+        return *this;   
+    }
 }
 
 template <typename T>
 Vector4<T>& Vector4<T>::operator-=(Vector4 const& _o)
 {
-    x -= _o.x;
-    y -= _o.y;
-    z -= _o.z;
-    w -= _o.w;
-    return *this;
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        S::Store(Data(), S::Sub(S::Load(Data()), S::Load(_o.Data())));
+        return *this;
+    }
+    else
+    {
+        x -= _o.x;
+        y -= _o.y;
+        z -= _o.z;
+        w -= _o.w;
+        return *this;   
+    }
 }
 
 template <typename T>
 Vector4<T>& Vector4<T>::operator*=(Vector4 const& _o)
 {
-    x *= _o.x;
-    y *= _o.y;
-    z *= _o.z;
-    w *= _o.w;
-    return *this;
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        S::Store(Data(), S::Mul(S::Load(Data()), S::Load(_o.Data())));
+        return *this;
+    }
+    else
+    {
+        x *= _o.x;
+        y *= _o.y;
+        z *= _o.z;
+        w *= _o.w;
+        return *this;   
+    }
 }
 
 template <typename T>
 Vector4<T>& Vector4<T>::operator/=(Vector4 const& _o)
 {
     assert(_o.x != 0.0f && _o.y != 0.0f && _o.z != 0.0f && _o.w != 0.0f && "Division by zero");
-    x /= _o.x;
-    y /= _o.y;
-    z /= _o.z;
-    w /= _o.w;
-    return *this;
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        S::Store(Data(), S::Div(S::Load(Data()), S::Load(_o.Data())));
+        return *this;
+    }
+    else
+    {
+        x /= _o.x;
+        y /= _o.y;
+        z /= _o.z;
+        w /= _o.w;
+        return *this;   
+    }
 }
 
 template <typename T>
 Vector4<T>& Vector4<T>::operator*=(float _scalar)
 {
-    x *= _scalar;
-    y *= _scalar;
-    z *= _scalar;
-    w *= _scalar;
-    return *this;
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        S::Store(Data(), S::Mul(S::Load(Data()), S::Set1(_scalar)));
+        return *this;
+    }
+    else
+    {
+        x *= _scalar;
+        y *= _scalar;
+        z *= _scalar;
+        w *= _scalar;
+        return *this;   
+    }
 }
 
 template <typename T>
 Vector4<T>& Vector4<T>::operator/=(float _scalar)
 {
     assert(_scalar != 0.0f && "Division by zero");
-    x /= _scalar;
-    y /= _scalar;
-    z /= _scalar;
-    w /= _scalar;
-    return *this;
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        S::Store(Data(), S::Div(S::Load(Data()), S::Set1(_scalar)));
+        return *this;
+    }
+    else
+    {
+        x /= _scalar;
+        y /= _scalar;
+        z /= _scalar;
+        w /= _scalar;
+        return *this;   
+    }
 }
 
 template <typename T>
 Vector4<T>& Vector4<T>::operator*=(Matrix4<T> const& _m)
 {
-    Vector4<T> result;
-    result.x = x * _m[0][0] + y * _m[1][0] + z * _m[2][0] + w * _m[3][0];
-    result.y = x * _m[0][1] + y * _m[1][1] + z * _m[2][1] + w * _m[3][1];
-    result.z = x * _m[0][2] + y * _m[1][2] + z * _m[2][2] + w * _m[3][2];
-    result.w = x * _m[0][3] + y * _m[1][3] + z * _m[2][3] + w * _m[3][3];
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        auto r0 = S::Load(_m.rows[0].Data());
+        auto r1 = S::Load(_m.rows[1].Data());
+        auto r2 = S::Load(_m.rows[2].Data());
+        auto r3 = S::Load(_m.rows[3].Data());
+        S::Transpose4x4(r0, r1, r2, r3);
+        
+        x = S::GetX(S::Dot4(S::Load(Data()), r0));
+        y = S::GetX(S::Dot4(S::Load(Data()), r1));
+        z = S::GetX(S::Dot4(S::Load(Data()), r2));
+        w = S::GetX(S::Dot4(S::Load(Data()), r3));
+        return *this;
+    }
+    else
+    {
+        Vector4<T> result;
+        result.x = x * _m[0][0] + y * _m[1][0] + z * _m[2][0] + w * _m[3][0];
+        result.y = x * _m[0][1] + y * _m[1][1] + z * _m[2][1] + w * _m[3][1];
+        result.z = x * _m[0][2] + y * _m[1][2] + z * _m[2][2] + w * _m[3][2];
+        result.w = x * _m[0][3] + y * _m[1][3] + z * _m[2][3] + w * _m[3][3];
     
-    x = result.x;
-    y = result.y;
-    z = result.z;
-    w = result.w;
-    return *this;
+        x = result.x;
+        y = result.y;
+        z = result.z;
+        w = result.w;
+        return *this;   
+    }
 }
 
 template <typename T>
