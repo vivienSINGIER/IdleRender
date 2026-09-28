@@ -7,7 +7,7 @@
 class DemoLight : public Test
 {
 public: 
-    void Run()
+    float Run()
     {
         Window window(1080, 720, L"Test", true);
         window.InitD3D12();
@@ -94,6 +94,7 @@ public:
             
             window.Display();
         }
+        return 0.0f;
     }
 };
 

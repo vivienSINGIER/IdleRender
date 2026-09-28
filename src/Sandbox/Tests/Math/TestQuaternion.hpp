@@ -39,7 +39,7 @@ static bool Vec4EqualQ(Vector4<float> const& _a, Vector4<float> const& _b)
 class TestQuaternion : public Test
 {
 public:
-    void Run() override
+    float Run() override
     {
         Test_Constructors();
         Test_Arithmetic();
@@ -54,6 +54,8 @@ public:
         Test_Conversions();
         Test_StaticFactories();
         DisplayResults();
+        
+        return 0.0f;
     }
 
 private:

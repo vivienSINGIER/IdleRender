@@ -12,7 +12,7 @@ static bool FloatEqual(float const& _a, float const& _b)
 class TestMathMethods : public Test
 {
 public:
-    void Run() override
+    float Run() override
     {
         Test_Min();
         Test_Max();
@@ -33,6 +33,7 @@ public:
         Test_InverseTrig();
         Test_Utilities();
         DisplayResults();
+        return 0.0f;
     }
 
 private:

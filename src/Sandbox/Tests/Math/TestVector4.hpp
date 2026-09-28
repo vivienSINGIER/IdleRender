@@ -33,8 +33,9 @@ static bool Vec3EqualV4(Vector3<float> const& _a, Vector3<float> const& _b)
 class TestVector4 : public Test
 {
 public:
-    void Run() override
+    float Run() override
     {
+        m_clock.Reset();
         m_clock.Start();
         Test_Constructors();
         Test_Arithmetic();
@@ -48,7 +49,8 @@ public:
         Test_Swizzle3();
         Test_Swizzle4();
         Test_Subscript();
-        DisplayResults();
+        // DisplayResults();
+        return m_clock.GetElapsedTime();
     }
 
 private:

@@ -1,6 +1,8 @@
 ﻿#ifndef SIMD_CONFIG_H_DEFINED
 #define SIMD_CONFIG_H_DEFINED
 
+// #define SIMD_FORCE_SCALAR 1
+
 #ifndef SIMD_FORCE_SCALAR
 
 #if defined(_M_X64) || defined(__x86_64__) || (defined(_M_IX86_FP) && _M_IX86_FP >= 2) || defined(__SSE2__)
@@ -24,4 +26,5 @@
 #endif
 
 #endif
+
 #endif

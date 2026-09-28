@@ -99,14 +99,22 @@ Vector4<T>::Vector4(std::initializer_list<T> _l)
 }
 
 template <typename T>
+Vector4<T>::Vector4(typename Simd::Traits<T>::Reg _reg)
+{
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        S::Store(Data(), _reg);
+    }
+}
+
+template <typename T>
 Vector4<T> Vector4<T>::operator+(Vector4 const& _o) const
 {
     if constexpr (Traits<T>::enabled)
     {
         using S = Traits<T>;
-        Vector4 res;
-        S::Store(res.Data(), S::Add(S::Load(Data()), S::Load(_o.Data())));
-        return res;
+        return Vector4(S::Add(S::Load(Data()), S::Load(_o.Data())));
     }
     else
     {
@@ -120,13 +128,11 @@ Vector4<T> Vector4<T>::operator-(Vector4 const& _o) const
     if constexpr (Traits<T>::enabled)
     {
         using S = Traits<T>;
-        Vector4 res;
-        S::Store(res.Data(), S::Sub(S::Load(Data()), S::Load(_o.Data())));
-        return res;
+        return Vector4(S::Sub(S::Load(Data()), S::Load(_o.Data())));
     }
     else
     {
-        return Vector4(x + _o.x, y + _o.y, z + _o.z, w + _o.w);
+        return Vector4(x - _o.x, y - _o.y, z - _o.z, w - _o.w);
     }
 }
 
@@ -136,9 +142,7 @@ Vector4<T> Vector4<T>::operator-() const
     if constexpr (Traits<T>::enabled)
     {
         using S = Traits<T>;
-        Vector4 res;
-        S::Store(res.Data(), S::Neg(S::Load(Data())));
-        return res;
+        return Vector4(S::Neg(S::Load(Data())));
     }
     else
     {
@@ -152,9 +156,7 @@ Vector4<T> Vector4<T>::operator*(Vector4 const& _o) const
     if constexpr (Traits<T>::enabled)
     {
         using S = Traits<T>;
-        Vector4 res;
-        S::Store(res.Data(), S::Mul(S::Load(Data()), S::Load(_o.Data())));
-        return res;
+        return Vector4(S::Mul(S::Load(Data()), S::Load(_o.Data())));
     }
     else
     {
@@ -169,9 +171,7 @@ Vector4<T> Vector4<T>::operator/(Vector4 const& _o) const
     if constexpr (Traits<T>::enabled)
     {
         using S = Traits<T>;
-        Vector4 res;
-        S::Store(res.Data(), S::Div(S::Load(Data()), S::Load(_o.Data())));
-        return res;
+        return Vector4(S::Div(S::Load(Data()), S::Load(_o.Data())));
     }
     else
     {
@@ -185,9 +185,7 @@ Vector4<T> Vector4<T>::operator*(float _scalar) const
     if constexpr (Traits<T>::enabled)
     {
         using S = Traits<T>;
-        Vector4 res;
-        S::Store(res.Data(), S::Mul(S::Load(Data()), S::Set1(_scalar)));
-        return res;
+        return Vector4(S::Mul(S::Load(Data()), S::Set1(_scalar)));
     }
     else
     {
@@ -202,9 +200,7 @@ Vector4<T> Vector4<T>::operator/(float _scalar) const
     if constexpr (Traits<T>::enabled)
     {
         using S = Traits<T>;
-        Vector4 res;
-        S::Store(res.Data(), S::Div(S::Load(Data()), S::Set1(_scalar)));
-        return res;
+        return Vector4(S::Div(S::Load(Data()), S::Set1(_scalar)));
     }
     else
     {
@@ -233,7 +229,7 @@ Vector4<T> Vector4<T>::operator*(Matrix4<T> const& _m) const
     }
     else
     {
-        Vector4<T> result;
+        Vector4 result;
         result.x = x * _m[0][0] + y * _m[1][0] + z * _m[2][0] + w * _m[3][0];
         result.y = x * _m[0][1] + y * _m[1][1] + z * _m[2][1] + w * _m[3][1];
         result.z = x * _m[0][2] + y * _m[1][2] + z * _m[2][2] + w * _m[3][2];
@@ -378,7 +374,7 @@ Vector4<T>& Vector4<T>::operator*=(Matrix4<T> const& _m)
     }
     else
     {
-        Vector4<T> result;
+        Vector4 result;
         result.x = x * _m[0][0] + y * _m[1][0] + z * _m[2][0] + w * _m[3][0];
         result.y = x * _m[0][1] + y * _m[1][1] + z * _m[2][1] + w * _m[3][1];
         result.z = x * _m[0][2] + y * _m[1][2] + z * _m[2][2] + w * _m[3][2];
@@ -395,37 +391,91 @@ Vector4<T>& Vector4<T>::operator*=(Matrix4<T> const& _m)
 template <typename T>
 bool Vector4<T>::operator==(Vector4 const& _o) const
 {
-    return x == _o.x && y == _o.y && z == _o.z && w == _o.w;
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        int mask = S::MoveMask(S::CmpEq(S::Load(Data()), S::Load(_o.Data())));
+        return S::AllTrue(mask);
+    }
+    else
+    {
+        return x == _o.x && y == _o.y && z == _o.z && w == _o.w;
+    }
+    
 }
 
 template <typename T>
 bool Vector4<T>::operator!=(Vector4 const& _o) const
 {
-    return x != _o.x || y != _o.y || z != _o.z || w != _o.w;
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        int mask = S::MoveMask(S::CmpEq(S::Load(Data()), S::Load(_o.Data())));
+        return !S::AllTrue(mask);
+    }
+    else
+    {
+        // FIX: was &&, which only returned true when ALL components differed
+        return x != _o.x || y != _o.y || z != _o.z || w != _o.w;
+    }
 }
 
 template <typename T>
 bool Vector4<T>::IsNull() const
 {
-    return x == 0.0f && y == 0.0f && z == 0.0f && w == 0.0f;
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        int mask = S::MoveMask(S::CmpEq(S::Load(Data()), S::Set1(0.0f)));
+        return S::AllTrue(mask);
+    }
+    else
+    {
+        return x == 0.0f && y == 0.0f && z == 0.0f && w == 0.0f;
+    }
 }
 
 template <typename T>
 float Vector4<T>::Dot(Vector4 const& _o) const
 {
-    return x * _o.x + y * _o.y + z * _o.z + w * _o.w;
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        return S::GetX(S::Dot4(S::Load(Data()), S::Load(_o.Data())));   
+    }
+    else
+    {
+        return x * _o.x + y * _o.y + z * _o.z + w * _o.w;
+    }
 }
 
 template <typename T>
 float Vector4<T>::Length() const
 {
-    return MathUtils::Sqrt(x * x + y * y + z * z + w * w);
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        float f = S::GetX(S::Dot4(S::Load(Data()), S::Load(Data())));
+        return MathUtils::Sqrt(f);
+    }
+    else
+    {
+        return MathUtils::Sqrt(x * x + y * y + z * z + w * w);
+    }
 }
 
 template <typename T>
 float Vector4<T>::LengthSquared() const
 {
-    return x * x + y * y + z * z + w * w;
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        return S::GetX(S::Dot4(S::Load(Data()), S::Load(Data())));
+    }
+    else
+    {
+        return x * x + y * y + z * z + w * w;
+    }
 }
 
 template <typename T>
@@ -434,7 +484,15 @@ Vector4<T> Vector4<T>::Normalized() const
     float length = Length();
     if (length == 0.0f || length == 1.0f)
         return *this;
-    return Vector4<T>(x / length, y / length, z / length, w / length);
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        return Vector4(S::Div(S::Load(Data()), S::Set1(length)));
+    }
+    else
+    {
+        return Vector4<T>(x / length, y / length, z / length, w / length);
+    }
 }
 
 template <typename T>
@@ -444,51 +502,105 @@ Vector4<T>& Vector4<T>::SelfNormalize()
     if (length == 0.0f || length == 1.0f)
         return *this;
     
-    x /= length;
-    y /= length;
-    z /= length;
-    w /= length;
-    return *this;
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        auto r = S::Load(Data());
+        S::Store(Data(), S::Div(r, S::Set1(length)));
+        return *this;
+    }
+    else
+    {
+        x /= length;
+        y /= length;
+        z /= length;
+        w /= length;    
+        return *this;
+    }
 }
 
 template <typename T>
 Vector4<T> Vector4<T>::Abs() const
 {
-    return Vector4<T>(
-        MathUtils::Abs(x),
-        MathUtils::Abs(y),
-        MathUtils::Abs(z),
-        MathUtils::Abs(w)
-        );
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        return Vector4(S::Abs(S::Load(Data())));
+    }
+    else
+    {
+        return Vector4<T>(
+            MathUtils::Abs(x),
+            MathUtils::Abs(y),
+            MathUtils::Abs(z),
+            MathUtils::Abs(w)
+        );   
+    }
 }
 
 template <typename T>
 Vector4<T> Vector4<T>::Clamp(Vector4 const& _min, Vector4 const& _max) const
 {
-    return Vector4<T>(
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        auto r   = S::Load(Data());
+        auto min = S::Load(_min.Data());
+        auto max = S::Load(_max.Data());
+        // FIX: was S::Clamp(S::Load(min), S::Load(max)) — loaded registers again and dropped r
+        return Vector4(S::Clamp(r, min, max));
+    }
+    else
+    {
+        return Vector4<T>(
         MathUtils::Clamp(x, _min.x, _max.x),
         MathUtils::Clamp(y, _min.y, _max.y),
         MathUtils::Clamp(z, _min.z, _max.z),
         MathUtils::Clamp(w, _min.w, _max.w)
-        );
+        );   
+    }
 }
 
 template <typename T>
 Vector4<T> Vector4<T>::Zero()
 {
-    return Vector4<T>(0, 0, 0, 0);
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        return Vector4(S::Set1(T(0)));
+    }
+    else
+    {
+        return Vector4<T>(0, 0, 0, 0);
+    }
 }
 
 template <typename T>
 Vector4<T> Vector4<T>::One()
 {
-    return Vector4<T>(1, 1, 1, 1);
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        return Vector4(S::Set1(T(1)));
+    }
+    else
+    {
+        return Vector4<T>(1, 1, 1, 1);
+    }
 }
 
 template <typename T>
 float Vector4<T>::Dot(Vector4 const& _v1, Vector4 const& _v2)
 {
-    return _v1.x * _v2.x + _v1.y * _v2.y + _v1.z * _v2.z + _v1.w * _v2.w;
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        return S::GetX(S::Dot4(S::Load(_v1.Data()), S::Load(_v2.Data())));
+    }
+    else
+    {
+        return _v1.x * _v2.x + _v1.y * _v2.y + _v1.z * _v2.z + _v1.w * _v2.w;
+    }
 }
 
 template <typename T>
@@ -500,44 +612,92 @@ Vector4<T> Vector4<T>::Normalize(Vector4 const& _o)
 template <typename T>
 Vector4<T> Vector4<T>::Min(Vector4 const& _v1, Vector4 const& _v2)
 {
-    return Vector4<T>(MathUtils::Min(_v1.x, _v2.x), MathUtils::Min(_v1.y, _v2.y), MathUtils::Min(_v1.z, _v2.z), MathUtils::Min(_v1.w, _v2.w));
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        return Vector4(S::Min(S::Load(_v1.Data()), S::Load(_v2.Data())));
+    }
+    else
+    {
+        return Vector4<T>(MathUtils::Min(_v1.x, _v2.x), MathUtils::Min(_v1.y, _v2.y), MathUtils::Min(_v1.z, _v2.z), MathUtils::Min(_v1.w, _v2.w));
+    }
 }
 
 template <typename T>
 Vector4<T> Vector4<T>::Max(Vector4 const& _v1, Vector4 const& _v2)
 {
-    return Vector4<T>(MathUtils::Max(_v1.x, _v2.x), MathUtils::Max(_v1.y, _v2.y), MathUtils::Max(_v1.z, _v2.z), MathUtils::Max(_v1.w, _v2.w));
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        return Vector4(S::Max(S::Load(_v1.Data()), S::Load(_v2.Data())));
+    }
+    else
+    {
+        return Vector4<T>(MathUtils::Max(_v1.x, _v2.x), MathUtils::Max(_v1.y, _v2.y), MathUtils::Max(_v1.z, _v2.z), MathUtils::Max(_v1.w, _v2.w));
+    }
 }
 
 template <typename T>
 Vector4<T> Vector4<T>::Abs(Vector4 const& _v)
 {
-    return Vector4<T>(MathUtils::Abs(_v.x), MathUtils::Abs(_v.y), MathUtils::Abs(_v.z), MathUtils::Abs(_v.w));
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        return Vector4(S::Abs(S::Load(_v.Data())));
+    }
+    else
+    {
+        return Vector4(MathUtils::Abs(_v.x), MathUtils::Abs(_v.y), MathUtils::Abs(_v.z), MathUtils::Abs(_v.w));
+    }
 }
 
 template <typename T>
 Vector4<T> Vector4<T>::Clamp(Vector4 const& _v, Vector4 const& _min, Vector4 const& _max)
 {
-    return Vector4<T>(MathUtils::Clamp(_v.x, _min.x, _max.x), MathUtils::Clamp(_v.y, _min.y, _max.y), MathUtils::Clamp(_v.z, _min.z, _max.z), MathUtils::Clamp(_v.w, _min.w, _max.w));
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        auto r   = S::Load(_v.Data());
+        auto min = S::Load(_min.Data());
+        auto max = S::Load(_max.Data());
+        return Vector4(S::Clamp(r, min, max));
+    }
+    else
+    {
+        return Vector4(MathUtils::Clamp(_v.x, _min.x, _max.x), 
+                          MathUtils::Clamp(_v.y, _min.y, _max.y),
+                          MathUtils::Clamp(_v.z, _min.z, _max.z), 
+                          MathUtils::Clamp(_v.w, _min.w, _max.w));
+    }
 }
 
 template <typename T>
 bool Vector4<T>::NearlyEqual(Vector4 const& _v1, Vector4 const& _v2)
 {
-    return  MathUtils::NearlyEqual(_v1.x, _v2.x, MathUtils::EPSILON) &&
-            MathUtils::NearlyEqual(_v1.y, _v2.y, MathUtils::EPSILON) &&
-            MathUtils::NearlyEqual(_v1.z, _v2.z, MathUtils::EPSILON) &&
-            MathUtils::NearlyEqual(_v1.w, _v2.w, MathUtils::EPSILON);
+    return NearlyEqual(_v1, _v2, MathUtils::EPSILON);
 }
 
 template <typename T>
 bool Vector4<T>::NearlyEqual(Vector4 const& _v1, Vector4 const& _v2, float _margin)
 {
-    return  MathUtils::NearlyEqual(_v1.x, _v2.x, _margin) &&
+    if constexpr (Traits<T>::enabled)
+    {
+        using S = Traits<T>;
+        auto r1 = S::Load(_v1.Data());
+        auto r2 = S::Load(_v2.Data());
+        auto diff = S::Abs(S::Sub(r1, r2));
+        int mask = S::MoveMask(S::CmpLe(diff, S::Set1(_margin)));
+        return S::AllTrue(mask);
+    }
+    else
+    {
+        return  MathUtils::NearlyEqual(_v1.x, _v2.x, _margin) &&
             MathUtils::NearlyEqual(_v1.y, _v2.y, _margin) &&
             MathUtils::NearlyEqual(_v1.z, _v2.z, _margin) &&
             MathUtils::NearlyEqual(_v1.w, _v2.w, _margin);
+    }
 }
+
 
 template <typename T>
 T Vector4<T>::operator[](int _i) const

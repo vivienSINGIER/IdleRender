@@ -11,7 +11,7 @@ public:
     Test() = default;
     virtual ~Test() = default;
     
-    virtual void Run() {}
+    virtual float Run() { return 0.0f; }
     
     void DisplayResults()
     {
@@ -202,12 +202,12 @@ private:
     template <typename T>
     void Report(const char* _name, const T& _value, const T& _expected, bool _passed)
     {
-        std::cout << (_passed ? "\033[92m" : "\033[91m")
-              << "[" << (_passed ? "PASS" : "FAIL") << "] "
-              << "\033[37m" << _name << " -> "
-              << "Expected (" << _expected << "), "
-              << "Got (" << _value << ")"
-              << "\033[0m\n";
+        // std::cout << (_passed ? "\033[92m" : "\033[91m")
+        //       << "[" << (_passed ? "PASS" : "FAIL") << "] "
+        //       << "\033[37m" << _name << " -> "
+        //       << "Expected (" << _expected << "), "
+        //       << "Got (" << _value << ")"
+        //       << "\033[0m\n";
         
         if (_passed) m_successCount++;
         else m_failCount++;

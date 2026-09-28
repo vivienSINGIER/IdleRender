@@ -36,7 +36,7 @@ static bool Vec3EqualM3(Vector3<float> const& _a, Vector3<float> const& _b)
 class TestMatrix3 : public Test
 {
 public:
-    void Run() override
+    float Run() override
     {
         Test_Constructors();
         Test_Identity();
@@ -53,6 +53,8 @@ public:
          Test_Conversions();
         Test_Subscript();
         DisplayResults();
+        
+        return 0.0f;
     }
 
 private:

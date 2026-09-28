@@ -25,7 +25,7 @@ static bool Vec2EqualV3(Vector2<float> const& _a, Vector2<float> const& _b)
 class TestVector3 : public Test
 {
 public:
-    void Run() override
+    float Run() override
     {
         Test_Constructors();
         Test_Arithmetic();
@@ -43,6 +43,7 @@ public:
         Test_Swizzle3();
         Test_Subscript();
         DisplayResults();
+        return 0.0f;
     }
 
 private:

@@ -6,9 +6,12 @@
 
 namespace Simd
 {
+    struct NoReg {};
+    
     template <typename T>
     struct Traits
     {
+        using Reg = NoReg;
         static constexpr bool enabled = false;
         static constexpr bool isFloating = false;
         static constexpr size_t alignment = alignof(T);

@@ -20,7 +20,7 @@ static bool FloatEqualV2(float const& _a, float const& _b)
 class TestVector2 : public Test
 {
 public:
-    void Run() override
+    float Run() override
     {
         Test_Constructors();
         Test_Arithmetic();
@@ -37,6 +37,7 @@ public:
         Test_Swizzle();
         Test_Subscript();
         DisplayResults();
+        return 0.0f;
     }
 
 private:
